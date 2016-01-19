@@ -1,8 +1,10 @@
 class User < ActiveRecord::Base
   enum status: { active: 0 }
 
-  has_many :raw_images, :mockups, :invitations
-  has_many_and_belongs_to :projects
+  has_many :raw_images
+  has_many :mockups
+  has_many :invitations
+  has_and_belongs_to_many :projects
 
   validates_presence_of :username, :pin
   validates_associated :raw_images, :mockups, :invitations, :projects
@@ -13,12 +15,12 @@ class User < ActiveRecord::Base
   validates :username, format: { with: /\A[a-z]+\z/,
     message: "Only a-z (lowercase) allowed" }
 
-  validates :user_count_within_limit 
+  validate :user_count_within_limit 
 
   def user_count_within_limit
-    LIMIT = 100
-    if User.count >= LIMIT
-      errors.add(:base, "User count exceeded allowed maximum: #{LIMIT}")
+    limit = 100
+    if User.count >= limit
+      errors.add(:base, "User count exceeded allowed maximum: #{limit}")
     end
   end
 end

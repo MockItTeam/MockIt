@@ -8,12 +8,12 @@ class Invitation < ActiveRecord::Base
   validates_presence_of :from, :to, :project
   validates_associated :form, :to, :project
   
-  validates :pending_invitation_count_per_project_within_limit 
+  validate :pending_invitation_count_per_project_within_limit 
 
   def pending_invitation_count_per_project_within_limit
-    LIMIT = 10
-    if self.project.invitation.where(status: :pending).count >= LIMIT
-      errors.add(:base, "Pending invitation count per project exceeded allowed maximum: #{LIMIT}")
+    limit = 10
+    if self.project.invitation.where(status: :pending).count >= limit
+      errors.add(:base, "Pending invitation count per project exceeded allowed maximum: #{limit}")
     end
   end
 

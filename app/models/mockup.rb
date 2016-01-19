@@ -1,7 +1,9 @@
 class Mockup < ActiveRecord::Base
   enum status: { active: 0 }
 
-  belongs_to :raw_image, :user, :project
+  belongs_to :raw_image
+  belongs_to :user
+  belongs_to :project
 
   validates_presence_of :user, :project
   validates_associated :raw_image, :user, :project
@@ -10,12 +12,12 @@ class Mockup < ActiveRecord::Base
   validates :name, format: { with: /\A[a-zA-Z0-9\s]+\z/,
     message: "Only a-z, A-Z, 0-9 and white-space allowed" }
 
-  validates :mockup_count_per_project_within_limit
+  validate :mockup_count_per_project_within_limit
 
   def mockup_count_per_project_within_limit
-    LIMIT = 100
-    if self.project.mockups >= LIMIT
-      errors.add(:base, "Mockup count per project exceeded allowed maximum: #{LIMIT}")
+    limit = 100
+    if self.project.mockups >= limit
+      errors.add(:base, "Mockup count per project exceeded allowed maximum: #{limit}")
     end
   end
   
